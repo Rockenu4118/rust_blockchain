@@ -3,7 +3,7 @@
 use sha2::{Digest, Sha256};
 use std::fmt;
 
-use crate::transaction::Transaction;
+use crate::chain::transaction::Transaction;
 
 pub struct Block {
     pub index: u64,

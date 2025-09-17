@@ -1,13 +1,14 @@
-mod account;
-mod block;
-mod blockchain;
-mod transaction;
+mod chain;
+mod message;
+mod network;
 
-use crate::account::Account;
-use crate::blockchain::Blockchain;
-use crate::transaction::Transaction;
+use crate::chain::account::Account;
+use crate::chain::blockchain::Blockchain;
+use crate::chain::transaction::Transaction;
+use crate::network::client::Client;
+use crate::network::server::Server;
 
-fn main() {
+fn chain_example() -> () {
     // let block = Block::new(0, [0; 32], [0; 32], 0);
 
     // println!("{:?}", block); // Debug print
@@ -41,4 +42,37 @@ fn main() {
     println!("Mining...");
     blockchain.mine_block();
     print!("{}", blockchain.tip());
+}
+
+fn main() -> std::io::Result<()> {
+    // chain_example();
+    let args: Vec<String> = std::env::args().collect();
+
+    if args.len() != 3 {
+        eprintln!("Usage:");
+        eprintln!("  {} server <addr:port>", args[0]);
+        eprintln!("  {} client <addr:port>", args[0]);
+        return Ok(());
+    }
+
+    match args[1].as_str() {
+        "server" => {
+            let server = Server::new("127.0.0.1:6000");
+            server.run()?;
+        }
+        "client" => {
+            let mut client = Client::connect(&args[2])?;
+
+            let stdin = std::io::stdin();
+
+            loop {
+                let mut input = String::new();
+                stdin.read_line(&mut input)?;
+                client.send(&input);
+            }
+        }
+        _ => println!("Unknown mode"),
+    }
+
+    Ok(())
 }

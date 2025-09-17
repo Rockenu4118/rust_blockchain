@@ -1,7 +1,6 @@
-use std::{collections::HashMap, hash::Hash, mem};
+use std::collections::HashMap;
 
-// mod block;
-use crate::{block::Block, transaction::Transaction};
+use crate::{chain::block::Block, chain::transaction::Transaction};
 
 pub struct Blockchain {
     pub chain: Vec<Block>,
